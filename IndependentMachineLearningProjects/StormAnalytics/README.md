@@ -1,8 +1,8 @@
 The solution consists of the following:  
 twitter-kafka-producer: A very basic producer that reads tweets from the Twitter Streaming API and stores them in Kafka.  
 twitter-storm-topology: A Storm topology that reads tweets from Kafka and, after applying filtering and sanitization, process the messages in parallel for:  
-	1.Sentiment Analysis: Using a sentiment analysis algorithm to classify the tweet into a positive or negative feeling.  
-	2.Top Hashtags: Calculates the top 20 hashtags using a sliding window.  
+	1. Sentiment Analysis: Using a sentiment analysis algorithm to classify the tweet into a positive or negative feeling.    
+	2. Top Hashtags: Calculates the top 20 hashtags using a sliding window.    
   
 Storm topology consists of following:  
 1. Kafka Spout:Spout implementation to read messages from Kafka  
