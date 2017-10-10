@@ -7,9 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-/**
- * Created by mserrate on 14/12/15.
- */
+
 public class Context {
     private static final Logger LOG = LoggerFactory.getLogger(Context.class);
 
