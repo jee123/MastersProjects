@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.util.Map;
 
 /**
- * Created by mserrate on 25/12/15.
+ * Bolt implementation to assign sentiment score to text of tweet.
  */
 public class SentimentAnalysisBolt extends BaseBasicBolt {
     private static final Logger LOG = LoggerFactory.getLogger(SentimentAnalysisBolt.class);
@@ -37,6 +37,7 @@ public class SentimentAnalysisBolt extends BaseBasicBolt {
         String text = tuple.getStringByField("tweet_text");
 
         try {
+            //using non-word delimiter.
             String delimiters = "\\W";
             String[] tokens = text.split(delimiters);
             double feeling = 0;
@@ -64,6 +65,7 @@ public class SentimentAnalysisBolt extends BaseBasicBolt {
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
-        declarer.declare(new Fields("tweet_id", "tweet_text", "tweet_sentiment", "tweet_hashtags", "tweet_created_at"));
+        declarer.declare(new Fields("tweet_id", "tweet_text", "tweet_sentiment",
+                "tweet_hashtags", "tweet_created_at"));
     }
 }

@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Created by mserrate on 14/12/15.
+ * Logging tuple information.
  */
 public class LoggerBolt extends BaseBasicBolt {
     public static final Logger LOG = LoggerFactory.getLogger(LoggerBolt.class);

@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 /**
- * Created by mserrate on 30/12/15.
+ * Bolt implementation to return Top N hashtags given a certain time frame.
  */
 public class TopHashtagBolt extends BaseBasicBolt {
     List<List> rankings = new ArrayList<List>();
@@ -28,7 +28,7 @@ public class TopHashtagBolt extends BaseBasicBolt {
             LOG.debug("Tick: " + rankings);
             collector.emit(new Values(new ArrayList(rankings)));
         } else {
-            rankHashtag(tuple);
+            rank(tuple);
         }
     }
 
@@ -44,9 +44,9 @@ public class TopHashtagBolt extends BaseBasicBolt {
         return conf;
     }
 
-    private void rankHashtag(Tuple tuple) {
+    private void rank(Tuple tuple) {
         String hashtag = tuple.getStringByField("hashtag");
-        Integer existingIndex = find(hashtag);
+        Integer existingIndex = lookup(hashtag);
         if (null != existingIndex)
             rankings.set(existingIndex, tuple.getValues());
         else
@@ -62,7 +62,7 @@ public class TopHashtagBolt extends BaseBasicBolt {
         shrinkRanking();
     }
 
-    private Integer find(String hashtag) {
+    private Integer lookup(String hashtag) {
         for(int i = 0; i < rankings.size(); ++i) {
             String current = (String) rankings.get(i).get(0);
             if (current.equals(hashtag)) {

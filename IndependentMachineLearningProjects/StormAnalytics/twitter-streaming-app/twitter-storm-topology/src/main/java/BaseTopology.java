@@ -7,11 +7,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-/**
- * Created by mserrate on 26/12/15.
- */
+
 public abstract class BaseTopology {
-    private static final Logger LOG = LoggerFactory.getLogger(BaseTopology.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SimpleTopology.class);
 
     protected Properties topologyConfig;
 

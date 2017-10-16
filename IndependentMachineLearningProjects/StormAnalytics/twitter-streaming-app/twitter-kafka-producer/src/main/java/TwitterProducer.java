@@ -13,9 +13,7 @@ import java.util.Properties;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-/**
- * Created by mserrate on 14/12/15.
- */
+
 public class TwitterProducer {
     private static final String BROKER_LIST = "kafka.broker.list";
     private static final String CONSUMER_KEY = "consumerKey";
@@ -34,8 +32,6 @@ public class TwitterProducer {
 
         final Producer<String, String> producer = new Producer<String, String>(producerConfig);
 
-
-        // Create an appropriately sized blocking queue
         BlockingQueue<String> queue = new LinkedBlockingQueue<String>(10000);
 
         // Define our endpoint: By default, delimited=length is set (we need this for our processor)
@@ -43,8 +39,10 @@ public class TwitterProducer {
         StatusesSampleEndpoint endpoint = new StatusesSampleEndpoint();
         endpoint.stallWarnings(false);
 
-        Authentication auth = new OAuth1(context.getString(CONSUMER_KEY), context.getString(CONSUMER_SECRET), context.getString(TOKEN), context.getString(SECRET));
-        //Authentication auth = new com.twitter.hbc.httpclient.auth.BasicAuth(username, password);
+        Authentication auth = new OAuth1(context.getString(CONSUMER_KEY),
+                context.getString(CONSUMER_SECRET),
+                context.getString(TOKEN),
+                context.getString(SECRET));
 
         // Create a new BasicClient. By default gzip is enabled.
         BasicClient client = new ClientBuilder()
@@ -55,19 +53,21 @@ public class TwitterProducer {
                 .processor(new StringDelimitedProcessor(queue))
                 .build();
 
-        // Establish a connection
+        // Establish connection
         client.connect();
 
-        // Do whatever needs to be done with messages
+        // Handle messages.
         for (int msgRead = 0; msgRead < 1000; msgRead++) {
             if (client.isDone()) {
-                System.out.println("Client connection closed unexpectedly: " + client.getExitEvent().getMessage());
+                System.out.println("Client connection closed " + client.getExitEvent()
+                        .getMessage());
                 break;
             }
 
             KeyedMessage<String, String> message = null;
             try {
-                message = new KeyedMessage<String, String>(context.getString(KAFKA_TOPIC), queue.take());
+                message = new KeyedMessage<String, String>(context.getString(KAFKA_TOPIC),
+                        queue.take());
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -77,8 +77,8 @@ public class TwitterProducer {
         producer.close();
         client.stop();
 
-        // Print some stats
-        System.out.printf("The client read %d messages!\n", client.getStatsTracker().getNumMessages());
+        System.out.printf("The client read %d messages!\n", client.getStatsTracker()
+                .getNumMessages());
     }
 
     public static void main(String[] args) {

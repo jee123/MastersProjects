@@ -13,10 +13,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by mserrate on 26/12/15.
+ * Bolt implementation to fix count of hashtag occurences.
  */
 public class HashtagCounterBolt extends BaseBasicBolt {
     private static final Logger LOG = LoggerFactory.getLogger(HashtagCounterBolt.class);
+    //map holding frequency of occurence of each hashtag.
     private Map<String, Long> hashtag_count = new HashMap<String, Long>();
 
     @Override

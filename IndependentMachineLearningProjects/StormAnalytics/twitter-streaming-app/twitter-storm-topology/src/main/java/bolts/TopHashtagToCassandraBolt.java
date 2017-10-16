@@ -13,7 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
- * Created by mserrate on 31/12/15.
+ * Storing top N hashtags in Cassandra. Here N is 20.
  */
 public class TopHashtagToCassandraBolt extends CassandraBaseBolt {
     private static final Logger LOG = LoggerFactory.getLogger(TopHashtagToCassandraBolt.class);

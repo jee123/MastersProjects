@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 /**
- * Created by mserrate on 26/12/15.
+ * Bolt implementation to store tweet text and sentiment to Cassandra.
  */
 public class SentimentAnalysisToCassandraBolt extends CassandraBaseBolt {
     private static final Logger LOG = LoggerFactory.getLogger(SentimentAnalysisToCassandraBolt.class);

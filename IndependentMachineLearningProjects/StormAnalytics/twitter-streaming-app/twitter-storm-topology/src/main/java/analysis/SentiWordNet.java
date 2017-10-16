@@ -23,19 +23,21 @@ public class SentiWordNet {
     }
 
     private SentiWordNet() throws IOException {
-        this("SentiWordNet_3.0.0_20130122.txt");
+        this("SentiWord.txt");
     }
 
     private SentiWordNet(String resourceName) throws IOException {
         // This is our main dictionary representation
         dictionary = new HashMap<String, Double>();
 
-        // From String to list of doubles.
-        HashMap<String, HashMap<Integer, Double>> tempDictionary = new HashMap<String, HashMap<Integer, Double>>();
+        // tempDictionary with key as String and value as a map.
+        HashMap<String, HashMap<Integer, Double>> tempDictionary = new
+                HashMap<String, HashMap<Integer, Double>>();
 
         BufferedReader csv = null;
         try {
-            csv = new BufferedReader(new InputStreamReader(ClassLoader.getSystemResourceAsStream(resourceName)));
+            csv = new BufferedReader(new InputStreamReader(
+                    ClassLoader.getSystemResourceAsStream(resourceName)));
             int lineNumber = 0;
 
             String line;
@@ -46,14 +48,13 @@ public class SentiWordNet {
                 if (!line.trim().startsWith("#")) {
                     // We use tab separation
                     String[] data = line.split("\t");
+                    //wordTypeMarker would be like a or n where a -> adjective and n -> noun.
                     String wordTypeMarker = data[0];
 
                     // Example line:
                     // POS ID PosS NegS SynsetTerm#sensenumber Desc
                     // a 00009618 0.5 0.25 spartan#4 austere#3 ascetical#2
-                    // ascetic#2 practicing great self-denial;...etc
 
-                    // Is it a valid line? Otherwise, through exception.
                     if (data.length != 6) {
                         throw new IllegalArgumentException(
                                 "Incorrect tabulation format in file, line: "
@@ -61,6 +62,7 @@ public class SentiWordNet {
                     }
 
                     // Calculate synset score as score = PosS - NegS
+                    //synsetScore used as value in map later.
                     Double synsetScore = Double.parseDouble(data[2])
                             - Double.parseDouble(data[3]);
 
@@ -69,11 +71,12 @@ public class SentiWordNet {
 
                     // Go through all terms of current synset.
                     for (String synTermSplit : synTermsSplit) {
-                        // Get synterm and synterm rank
                         String[] synTermAndRank = synTermSplit.split("#");
+                        //example of synTerm would be ascetic#a or good#a
                         String synTerm = synTermAndRank[0] + "#"
                                 + wordTypeMarker;
 
+                        //synTermRank used as key in map later.
                         int synTermRank = Integer.parseInt(synTermAndRank[1]);
                         // What we get here is a map of the type:
                         // term -> {score of synset#1, score of synset#2...}
@@ -84,7 +87,8 @@ public class SentiWordNet {
                                     new HashMap<Integer, Double>());
                         }
 
-                        // Add synset link to synterm
+                        // Get the map corresponding to synTerm key and
+                        // put synTermRank as key and synsetScore as value.
                         tempDictionary.get(synTerm).put(synTermRank,
                                 synsetScore);
                     }
@@ -99,17 +103,22 @@ public class SentiWordNet {
 
                 // Calculate weighted average. Weigh the synsets according to
                 // their rank.
-                // Score= 1/2*first + 1/3*second + 1/4*third ..... etc.
-                // Sum = 1/1 + 1/2 + 1/3 ...
+                // score = score_first/rank_first + score_second/rank_second +....
+                // sum = 1/rank_first + 1/rank_second + 1/rank_third....
+                // final_score = score/sum
+                // dictionary.put(word, final_score)
                 double score = 0.0;
                 double sum = 0.0;
                 for (Map.Entry<Integer, Double> setScore : synSetScoreMap
                         .entrySet()) {
+                    //synTermRank == setScore.getKey()
+                    //synsetScore == setScore.getValue()
                     score += setScore.getValue() / (double) setScore.getKey();
                     sum += 1.0 / (double) setScore.getKey();
                 }
                 score /= sum;
 
+                //using word from before like synterm as key and score as value.
                 dictionary.put(word, score);
             }
         } catch (Exception e) {
@@ -121,6 +130,7 @@ public class SentiWordNet {
         }
     }
 
+    //returns value from a dictionary where key is word#pos.
     public double extract(String word, String pos) {
         String key = word + "#" + pos;
         if (dictionary.containsKey(key))
@@ -137,7 +147,7 @@ public class SentiWordNet {
 
         String pathToSWN = args[0];
         SentiWordNet sentiwordnet = new SentiWordNet(pathToSWN);
-
+        //returns score corresponding to the given key like good#a, blue#n
         System.out.println("good#a "+sentiwordnet.extract("good", "a"));
         System.out.println("bad#a "+sentiwordnet.extract("bad", "a"));
         System.out.println("blue#a "+sentiwordnet.extract("blue", "a"));

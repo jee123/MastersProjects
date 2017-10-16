@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 import java.util.HashSet;
 
 /**
- * Created by mserrate on 25/12/15.
+ * Bolt implementation to filter out all non english tweet text.
  */
 public class TwitterFilterBolt extends BaseBasicBolt {
     private static final Logger LOG = LoggerFactory.getLogger(TwitterFilterBolt.class);

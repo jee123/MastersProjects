@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.text.Normalizer;
 
 /**
- * Created by mserrate on 25/12/15.
+ * Bolt implementation to normalize text before passing to sentiment analysis algo.
  */
 public class TextSanitizationBolt extends BaseBasicBolt {
     private static final Logger LOG = LoggerFactory.getLogger(TextSanitizationBolt.class);
@@ -20,6 +20,7 @@ public class TextSanitizationBolt extends BaseBasicBolt {
     public void execute(Tuple tuple, BasicOutputCollector collector) {
 
         String text = tuple.getString(1);
+        //Normalizing the incoming tweet text.
         String normalizedText = Normalizer.normalize(text, Normalizer.Form.NFD);
         text = normalizedText.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
         text = text.replaceAll("[^\\p{L}\\p{Nd}]+", " ").toLowerCase();

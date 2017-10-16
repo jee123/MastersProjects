@@ -10,7 +10,7 @@ import storm.kafka.bolt.KafkaBolt;
 import java.util.Properties;
 
 /**
- * Created by mserrate on 14/12/15.
+ * Topology defining the spout and bolts in use.
  */
 public class TwitterProcessorTopology extends BaseTopology {
 
@@ -34,7 +34,7 @@ public class TwitterProcessorTopology extends BaseTopology {
 
     private void configureBolts(TopologyBuilder topology) {
         // filtering
-        topology.setBolt("twitterFilter", new TwitterFilterBolt(), 4)
+        topology.setBolt("twitterFilter", new TwitterFilterBolt(), 2)
                 .shuffleGrouping("twitterSpout");
 
         // sanitization
@@ -63,7 +63,6 @@ public class TwitterProcessorTopology extends BaseTopology {
         topology.setBolt("topHashtagToCassandra", new TopHashtagToCassandraBolt(topologyConfig), 4)
                 .shuffleGrouping("topHashtag");
 
-        //topology.setBolt("logBolt", new LoggerBolt()).shuffleGrouping("hashtagSplitter");
     }
 
     private void buildAndSubmit() throws Exception {

@@ -16,7 +16,7 @@ import java.util.HashSet;
 import java.util.Map;
 
 /**
- * Created by mserrate on 28/12/15.
+ * Bolt implementation to split different hashtags appearuing in a tweet.
  */
 public class HashtagSplitterBolt extends BaseRichBolt {
     OutputCollector collector;

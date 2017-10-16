@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * Created by mserrate on 28/12/15.
+ * Bolt implementation to push data to Cassandra.
  */
 public abstract class CassandraBaseBolt extends BaseBasicBolt {
     private Cluster cluster;
@@ -25,7 +25,9 @@ public abstract class CassandraBaseBolt extends BaseBasicBolt {
 
     @Override
     public void prepare(Map stormConf, TopologyContext context) {
-        cluster = Cluster.builder().addContactPoint(properties.getProperty("cassandra.host")).build();
+        cluster = Cluster.builder().addContactPoint(properties.
+                getProperty("cassandra.host")).
+                build();
         session = cluster.connect(properties.getProperty("cassandra.keyspace"));
     }
 
