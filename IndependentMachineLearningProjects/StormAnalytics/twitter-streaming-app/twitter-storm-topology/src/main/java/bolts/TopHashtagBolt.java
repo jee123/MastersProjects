@@ -17,7 +17,7 @@ import java.util.*;
  * Bolt implementation to return Top N hashtags given a certain time frame.
  */
 public class TopHashtagBolt extends BaseBasicBolt {
-    List<List> rankings = new ArrayList<List>();
+    List<List<String>> rankings = new ArrayList<>();
     private static final Logger LOG = LoggerFactory.getLogger(TopHashtagBolt.class);
     private static final Integer TOPN = 20;
     private static final Integer TICK_FREQUENCY = 10;
@@ -47,7 +47,7 @@ public class TopHashtagBolt extends BaseBasicBolt {
     private void rank(Tuple tuple) {
         String hashtag = tuple.getStringByField("hashtag");
         Integer existingIndex = lookup(hashtag);
-        if (null != existingIndex)
+        if (existingIndex != null)
             rankings.set(existingIndex, tuple.getValues());
         else
             rankings.add(tuple.getValues());
@@ -62,6 +62,7 @@ public class TopHashtagBolt extends BaseBasicBolt {
         shrinkRanking();
     }
 
+    //returns the existing index of hashtag if present else returns null.
     private Integer lookup(String hashtag) {
         for(int i = 0; i < rankings.size(); ++i) {
             String current = (String) rankings.get(i).get(0);
@@ -85,6 +86,8 @@ public class TopHashtagBolt extends BaseBasicBolt {
         }
     }
 
+    //keeps check on total size of rankings list. As soon as it's > TOPN then it starts removing the elements 
+    //until ranking list size is returned to TOPN.
     private void shrinkRanking() {
         int size = rankings.size();
         if (TOPN >= size) return;
