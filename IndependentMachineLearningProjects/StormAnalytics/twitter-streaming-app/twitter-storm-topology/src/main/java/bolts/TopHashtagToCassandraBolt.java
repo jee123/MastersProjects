@@ -24,12 +24,13 @@ public class TopHashtagToCassandraBolt extends CassandraBaseBolt {
 
     @Override
     public void execute(Tuple tuple, BasicOutputCollector collector) {
-        List<List> rankings = (List) tuple.getValue(0);
+        List<List<String>> rankings = (List<String>) tuple.getValue(0);
 
         Map<String, Long> rankingMap = new HashMap<>();
 
-        for (List list : rankings) {
-            rankingMap.put((String) list.get(0), (Long) list.get(1));
+        for (List<String> list : rankings) {
+            //rankingMap.put((String) list.get(0), (Long) list.get(1));
+            rankingMap.put(list.get(0), (Long) list.get(1));
         }
 
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
@@ -37,6 +38,7 @@ public class TopHashtagToCassandraBolt extends CassandraBaseBolt {
         Statement statement = QueryBuilder.insertInto("top_hashtag_by_day")
                 .value("date", df.format(new Date()))
                 .value("bucket_time", QueryBuilder.raw("dateof(now())"))
+                // insert into ranking column rankingMap with key as hashtag and value as its count. 
                 .value("ranking", rankingMap);
 
         LOG.debug(statement.toString());
