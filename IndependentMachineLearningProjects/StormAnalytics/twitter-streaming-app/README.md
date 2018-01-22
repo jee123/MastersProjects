@@ -5,8 +5,7 @@ twitter-streaming-app
 * [Apache Kafka](http://kafka.apache.org/) 0.8+
 * [Apache Storm](http://storm.apache.org/) 0.10+
 * [Apache Cassandra](http://cassandra.apache.org/) 2.2+
-* make sure python is 2.7.11 to avoid cassandra and python conflict.
-You can use the following repository to get the above infrastructure on docker containers: https://github.com/mserrate/CoreOS-BigData
+* make sure python is 2.7.11 to avoid cassandra and python conflict.  
 
 ### Create Kafka topic
 ```
