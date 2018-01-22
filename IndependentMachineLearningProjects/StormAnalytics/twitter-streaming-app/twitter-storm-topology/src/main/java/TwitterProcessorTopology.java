@@ -33,33 +33,36 @@ public class TwitterProcessorTopology extends BaseTopology {
     }
 
     private void configureBolts(TopologyBuilder topology) {
-        // filtering
+        
+        // bolt to filter out all non-english tweets.
         topology.setBolt("twitterFilter", new TwitterFilterBolt(), 2)
                 .shuffleGrouping("twitterSpout");
 
-        // sanitization
+        // bolt to carry out the text normalization inorder to be processed properly by the sentiment analysis algo.
         topology.setBolt("textSanitization", new TextSanitizationBolt(), 4)
                 .shuffleGrouping("twitterFilter");
 
-        // sentiment analysis
+        // bolt analysing the tweet text word by word and classifying its value between -1 and 1.
         topology.setBolt("sentimentAnalysis", new SentimentAnalysisBolt(), 4)
                 .shuffleGrouping("textSanitization");
 
-        // persist tweets with analysis to Cassandra
+        // bolt to store tweets and their sentiment score in cassandra. 
         topology.setBolt("sentimentAnalysisToCassandra", new SentimentAnalysisToCassandraBolt(topologyConfig), 4)
                 .shuffleGrouping("sentimentAnalysis");
 
-        // divide sentiment by hashtag
+        // bolt to split different hashtags appearing in tweet.
         topology.setBolt("hashtagSplitter", new HashtagSplitterBolt(), 4)
                 .shuffleGrouping("textSanitization");
 
-        // persist hashtags to Cassandra
+        // bolt to count hashtag occurences.
         topology.setBolt("hashtagCounter", new HashtagCounterBolt(), 4)
                 .fieldsGrouping("hashtagSplitter", new Fields("tweet_hashtag"));
-
+        
+        // bolt to rank top 20 hashtags.
         topology.setBolt("topHashtag", new TopHashtagBolt())
                 .globalGrouping("hashtagCounter");
 
+        // bolt to store top 20 hashtags in Cassandra.
         topology.setBolt("topHashtagToCassandra", new TopHashtagToCassandraBolt(topologyConfig), 4)
                 .shuffleGrouping("topHashtag");
 
